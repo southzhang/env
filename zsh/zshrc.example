@@ -1,0 +1,6 @@
+
+export ENV=~/env
+
+source ${ENV}/zsh/zshrc
+
+

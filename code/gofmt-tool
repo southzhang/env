@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+
+import os
+import argparse
+import subprocess
+import stat
+import re
+
+# Using gofmt to format all go source code
+def format_project(path, verbose):
+    print("ready to format go package", path)
+
+    files = []
+    # r=root, d=directories, f = files
+    for r, d, f in os.walk(path):
+        if '.git' in r:
+            continue
+        if '/vendor/' in r:
+            continue
+        for file in f:
+            if '.pb.go' in file:
+                continue
+            if '.go' in file:
+                files.append(os.path.join(r, file))
+
+    for f in files:
+        if verbose:
+            print("format file:", f)
+        subprocess.run(["goreturns", "-w", f])
+
+# change the source file permission to 644
+def chmod_project(path, verbose):
+    print("ready to chmod go package", path)
+
+    files = []
+
+    # r=root, d=directories, f = files
+    for r, d, f in os.walk(path):
+        if '.git' in r:
+            continue
+        if '/vendor/' in r:
+            continue
+        for file in f:
+            if '.pb.go' in file:
+                continue
+            if '.go' in file:
+                files.append(os.path.join(r, file))
+            if '.s' in file:
+                files.append(os.path.join(r, file))
+            if '.c' in file:
+                files.append(os.path.join(r, file))
+            if '.h' in file:
+                files.append(os.path.join(r, file))
+
+    for f in files:
+        if verbose:
+            print("chmod file:", f)
+        os.chmod(f, stat.S_IWUSR|stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
+
+
+def filter_lint_output(infos):
+    l = [info for info in infos if not re.search('exported \w+ [\.\w]+ should have comment or be unexported', info)]
+    l.sort()
+    return l
+
+
+
+
+
+# run golint to go package
+def lint_project(path, verbose):
+    print("ready to golint go package", path)
+
+    pkgs = [os.path.join(path, dI) for dI in os.listdir(path) if os.path.isdir(os.path.join(path,dI)) if '.' not in dI if 'vendor' not in dI]
+
+    output = []
+    if verbose:
+        print("lint package:", path)
+    process = subprocess.run(["golint", path], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+    output +=process.stdout.split('\n')
+
+
+    for p in pkgs:
+        if verbose:
+            print("lint package:", p)
+        process = subprocess.run(["golint", "{}/...".format(p)], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+        output +=process.stdout.split('\n')
+
+    print(*filter_lint_output(output), sep='\n')
+
+def main():
+    parser = argparse.ArgumentParser(description='go release tools')
+    parser.add_argument('-f', '--format',metavar='format',
+                    dest='format_packages', action='append',
+                    help='package to format')
+    parser.add_argument('--chmod',metavar='chmod',
+                    dest='chmod_packages', action='append',
+                    help='package to chmod')
+    parser.add_argument('-v', '--verbose',
+                    dest='verbose', action='store_true',
+                    help='verbose mode')
+    parser.add_argument('package', nargs='+')
+                    #dest='packages',# action='append',
+                    #help='package to check')
+    args = parser.parse_args()
+    if args.format_packages:
+        for pkg in args.format_packages:
+            format_project(pkg, args.verbose)
+    if args.chmod_packages:
+        for pkg in args.chmod_packages:
+            chmod_project(pkg, args.verbose)
+    for pkg in args.package:
+        chmod_project(pkg, args.verbose)
+        format_project(pkg, args.verbose)
+        lint_project(pkg, args.verbose)
+
+if __name__ == "__main__":
+    main()
+
