@@ -76,28 +76,4 @@ function gfw () {
 	export https_proxy=socks5://127.0.0.1:1080
 }
 
-function chaincodezip() {
-	echo "==> 开始对cabbage 打包压缩..."
 
-	zip_path=~/Documents/workspace
-	source_path=~/Documents/workspace/GOPATH/src/pingan.com/fimax/cabbage
-
-	DIR=`pwd`
-	target_path=/tmp/tmpwsx123/pingan.com/fimax
-	rm -rf /tmp/tmpwsx123
-	mkdir -p $target_path
-
-	cp -r $source_path $target_path
-	cd $target_path/cabbage
-	rm -rf .git
-	rm -rf .idea
-	rm -f .gitignore
-
-	cd ../../..
-	pwd
-	zip -qr $zip_path/cabbage.zip ./*
-	cd ..
-	rm -rf tmpwsx123
-	cd $DIR
-	echo "==> cabbage 打包压缩 zip 成功"
-}
