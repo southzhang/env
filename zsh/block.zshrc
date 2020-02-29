@@ -1,5 +1,5 @@
 
-alias bl-cluster=/Users/zhangwenming/Documents/workspace/blockchainDeployment_local/scripts/cluster.sh
+alias bl-cluster=/Users/$USER/Documents/workspace/blockchainDeployment_local/scripts/cluster.sh
 
 
 bl() {

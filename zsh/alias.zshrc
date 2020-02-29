@@ -17,6 +17,8 @@ alias la='ls -a'
 alias ll='ls -l'
 alias grep='grep --color=auto'
 
+alias git='LANG=en_GB git'
+
 alias format_json='python -mjson.tool'
 
 alias gcc='gcc-7'
