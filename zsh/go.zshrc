@@ -72,14 +72,13 @@ function addgopath () {
 
 function gfw () {
 	export http_proxy=socks5://127.0.0.1:1080
-	export https_proxy=socks5://127.0.0.1:1080
+	export https_proxy=$http_proxy
 }
 
 function chaincodezip() {
-	echo "==> 开始对cabbage 打包压缩..."
+	echo "==> 开始对chaincode 打包压缩..."
 
-	zip_path=~/Documents/workspace
-	source_path=~/Documents/workspace/GOPATH/src/pingan.com/fimax/cabbage
+	source_path=$GOPATH/src/pingan.com/fimax/chaincode-application
 
 	DIR=`pwd`
 	target_path=/tmp/tmpwsx123/pingan.com/fimax
@@ -87,14 +86,21 @@ function chaincodezip() {
 	mkdir -p $target_path
 
 	cp -r $source_path $target_path
-	cd $target_path/cabbage
+	cd $target_path/chaincode-application
 	rm -rf .git
 	rm -rf .idea
 	rm -f .gitignore
+	rm -f .DS_Store
+
+	rm -f release
+	rm -f cab.mainpkg
+	rm -f Makefile
+	rm -f go.mod
+	rm -f go.sum
 
 	cd ../../..
 	pwd
-	zip -qr $zip_path/cabbage.zip ./*
+	zip -qr $DIR/chaincode-application.zip ./*
 	cd ..
 	rm -rf tmpwsx123
 	cd $DIR

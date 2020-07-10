@@ -5,7 +5,7 @@ alias b="cd .."
 alias view="vim -R"
 alias vi="vim"
 cdls(){chdir $1;ls}
-alias cd='cdls'
+#alias cd='cdls'
 #alias gvim="gvim -geom 160x80"
 alias ssh='ssh -o serveraliveinterval=360 -X'
 
@@ -23,7 +23,7 @@ alias format_json='python -mjson.tool'
 
 alias gcc='gcc-7'
 
-alias ssr="http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087"
+# alias ssr="http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087"
 
 alias gofmtool="~/env/code/gofmt-tool"
 
